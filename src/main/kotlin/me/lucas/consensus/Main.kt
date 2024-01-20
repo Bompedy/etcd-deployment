@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
             exitProcess(1)
         }
     }
-    val algorithms = arrayOf("raft", "rabia", "paxos", "pineapple", "pineapple-memory")
+    val algorithms = arrayOf("bench", "raft", "rabia", "paxos", "pineapple", "pineapple-memory")
 
     guard(directory == null, "You must specify a directory with --directory=")
     guard(algorithm == null, "You must specify an algorithm with --algorithm= \nOptions - ${algorithms.joinToString(separator = ", ") { it }}")
@@ -32,12 +32,6 @@ fun main(args: Array<String>) {
 
     val file = File(directory)
     if (!file.exists()) file.mkdirs()
-    val host = InetAddress.getLocalHost().hostName.split(".")[0]
-    val addresses = (1..nodes).map { "10.10.1.$it" }
-    val ip = addresses[host.substringAfter("-").toInt() - 1]
-    println("Host: $host")
-    println("IP: $ip")
-    println("Algorithim: $algorithm")
 
     try {
         arrayOf(
@@ -61,6 +55,16 @@ fun main(args: Array<String>) {
                 process.waitFor()
             }
         }
+
+        if (algorithm.equals("bench")) return
+
+        val host = InetAddress.getLocalHost().hostName.split(".")[0]
+        val addresses = (1..nodes).map { "10.10.1.$it" }
+        val ip = addresses[host.substringAfter("-").toInt() - 1]
+        println("Host: $host")
+        println("IP: $ip")
+        println("Algorithim: $algorithm")
+
 
         val setup = if (algorithm == "raft") addresses.joinToString(prefix = "--initial-cluster ", separator = ",") {
             "node-${addresses.indexOf(it) + 1}=http://$it:12380"
