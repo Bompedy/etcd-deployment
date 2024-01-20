@@ -45,7 +45,8 @@ fun main(args: Array<String>) {
                 "git clone https://github.com/Exerosis/PineappleGo.git",
                 "git clone https://github.com/Exerosis/ETCD.git",
                 "git clone https://github.com/Exerosis/RabiaGo.git",
-                "git clone https://github.com/Bompedy/RS-Paxos.git"
+                "git clone https://github.com/Bompedy/RS-Paxos.git",
+                "git clone https://github.com/Exerosis/go-ycsb.git"
         ).forEach {
             ProcessBuilder().apply {
                 directory(file)
