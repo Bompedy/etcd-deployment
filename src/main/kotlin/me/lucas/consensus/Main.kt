@@ -6,6 +6,21 @@ import java.io.InputStreamReader
 import java.net.InetAddress
 import kotlin.system.exitProcess
 
+fun String.process(directory: File) {
+    ProcessBuilder().apply {
+        directory(directory)
+        command(listOf("/bin/bash", "-c", this@process))
+        redirectErrorStream(true)
+        val process = start()
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        var line: String?
+        while (reader.readLine().also { line = it } != null) {
+            println(line)
+        }
+        process.waitFor()
+    }
+}
+
 fun main(args: Array<String>) {
     val directory = args.find { it.startsWith("--directory=") }?.substringAfter("=")
     val algorithm = args.find { it.startsWith("--algorithm=") }?.substringAfter("=")
@@ -41,22 +56,12 @@ fun main(args: Array<String>) {
                 "git clone https://github.com/Exerosis/RabiaGo.git",
                 "git clone https://github.com/Bompedy/RS-Paxos.git",
                 "git clone https://github.com/Exerosis/go-ycsb.git"
-        ).forEach {
-            ProcessBuilder().apply {
-                directory(file)
-                command(listOf("/bin/bash", "-c", it))
-                redirectErrorStream(true)
-                val process = start()
-                val reader = BufferedReader(InputStreamReader(process.inputStream))
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    println(line)
-                }
-                process.waitFor()
-            }
-        }
+        ).forEach { it.process(file) }
 
-        if (algorithm.equals("bench")) return
+        if (algorithm.equals("bench")) {
+            "cd go-ycsb && sudo make".trimIndent().process(file)
+            return
+        }
 
         val host = InetAddress.getLocalHost().hostName.split(".")[0]
         val addresses = (1..nodes).map { "10.10.1.$it" }
