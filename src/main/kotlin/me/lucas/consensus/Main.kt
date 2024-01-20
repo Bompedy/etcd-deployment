@@ -34,7 +34,7 @@ fun main(args: Array<String>) {
     if (!file.exists()) file.mkdirs()
     val host = InetAddress.getLocalHost().hostName.split(".")[0]
     val addresses = (1..nodes).map { "10.10.1.$it" }
-    val ip = addresses[0]
+    val ip = addresses[host.substringAfter("-").toInt() - 1]
     println("Host: $host")
     println("IP: $ip")
     println("Algorithim: $algorithm")
