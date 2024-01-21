@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
 
     if (algorithm == "rabia" || algorithm == "paxos") {
         guard(failures == null, "You must specify an amount of failures with --failures=")
-        guard(failures!! >= nodes, "Failures must be less than $nodes nodes")
+        guard(failures!! > nodes, "Failures must be less than $nodes nodes")
     }
 
     val file = File(directory)
