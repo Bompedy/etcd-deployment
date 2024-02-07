@@ -4,6 +4,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.net.InetAddress
+import java.net.NetworkInterface
 import kotlin.system.exitProcess
 
 fun String.process(directory: File) {
@@ -62,7 +63,20 @@ fun main(args: Array<String>) {
             return
         }
 
-        val ip = InetAddress.getLocalHost()
+        val interfaces = NetworkInterface.getNetworkInterfaces()
+        var ip: String? = null
+        while (interfaces.hasMoreElements()) {
+            val next = interfaces.nextElement()
+            val addresses = next.inetAddresses
+            while (addresses.hasMoreElements()) {
+                val address = addresses.nextElement()
+                println("\nNext")
+                println("Address: ${address.hostName}")
+                println("ip: ${address.hostAddress}")
+
+            }
+        }
+
         println("ip: $ip")
         val host = ""
 //        guard(host == -1, "Can't find host address.")
