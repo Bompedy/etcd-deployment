@@ -3,7 +3,6 @@ package me.lucas.consensus
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
-import java.net.InetAddress
 import java.net.NetworkInterface
 import kotlin.system.exitProcess
 
@@ -70,17 +69,17 @@ fun main(args: Array<String>) {
             val addresses = next.inetAddresses
             while (addresses.hasMoreElements()) {
                 val address = addresses.nextElement()
-                println("\nNext")
-                println("Address: ${address.hostName}")
-                println("ip: ${address.hostAddress}")
-
+                if (ips.contains(address.hostAddress)) {
+                    ip = address.hostAddress
+                }
             }
         }
 
         println("ip: $ip")
-        val host = ""
+        guard(ip == null, "Can't find host!")
+        val hostName = "node-${ips.indexOf(ip)}"
 //        guard(host == -1, "Can't find host address.")
-        println("Host: $host")
+        println("Host: $hostName")
         println("IP: $ip")
         println("Algorithim: $algorithm")
 
@@ -108,10 +107,10 @@ fun main(args: Array<String>) {
                 cd RabiaGo && git pull && cd .. &&
                 cd Raft && git pull && cd .. &&
                 cd RS-Paxos && git pull && cd .. &&
-                cd ETCD && git pull && sudo rm -rf $host.etcd && make build &&
+                cd ETCD && git pull && sudo rm -rf $hostName.etcd && make build &&
                 sudo ./bin/etcd \
                 --log-level panic \
-                --name "$host" \
+                --name "$hostName" \
                 --initial-cluster-token etcd-cluster-1 \
                 --listen-client-urls http://$ip:2379,http://127.0.0.1:2379 \
                 --advertise-client-urls http://$ip:2379 \
