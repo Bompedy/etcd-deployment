@@ -89,6 +89,7 @@ fun main(args: Array<String>) {
         } else ""
 
         ProcessBuilder().apply {
+            println("NODES: ${ips.joinToString { "$it," }.dropLast(1)}")
             environment()["NODES"] = ips.joinToString { "$it," }.dropLast(1)
             environment()["RS_RABIA"] = (algorithm == "rabia").toString()
             environment()["RS_PAXOS"] = (algorithm == "paxos").toString()
