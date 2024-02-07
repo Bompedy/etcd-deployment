@@ -77,7 +77,7 @@ fun main(args: Array<String>) {
 
         println("ip: $ip")
         guard(ip == null, "Can't find host!")
-        val hostName = "node-${ips.indexOf(ip)}"
+        val hostName = "node-${ips.indexOf(ip) + 1}"
 //        guard(host == -1, "Can't find host address.")
         println("Host: $hostName")
         println("IP: $ip")
