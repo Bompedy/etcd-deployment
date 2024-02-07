@@ -25,6 +25,7 @@ fun main(args: Array<String>) {
     val directory = args.find { it.startsWith("--directory=") }?.substringAfter("=")
     val algorithm = args.find { it.startsWith("--algorithm=") }?.substringAfter("=")
     val ips = args.find { it.startsWith("--ips=") }?.substringAfter("=")?.split(",")
+    println("IPS: $ips")
     val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
         if (invalid) {
@@ -89,8 +90,7 @@ fun main(args: Array<String>) {
         } else ""
 
         ProcessBuilder().apply {
-            println("NODES: ${ips.joinToString { "$it," }.dropLast(1)}")
-            environment()["NODES"] = ips.joinToString { "$it," }.dropLast(1)
+            environment()["NODES"] = ips.joinToString(separator = ",") { it }.dropLast(1)
             environment()["RS_RABIA"] = (algorithm == "rabia").toString()
             environment()["RS_PAXOS"] = (algorithm == "paxos").toString()
             environment()["PINEAPPLE"] = (algorithm == "pineapple").toString()
