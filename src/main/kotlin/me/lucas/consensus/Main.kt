@@ -24,7 +24,7 @@ fun String.process(directory: File) {
 fun main(args: Array<String>) {
     val directory = args.find { it.startsWith("--directory=") }?.substringAfter("=")
     val algorithm = args.find { it.startsWith("--algorithm=") }?.substringAfter("=")
-    val nodes = args.find { it.startsWith("--nodes=") }?.substringAfter("=")?.toInt()
+    val ips = args.find { it.startsWith("--ips=") }?.substringAfter("=")?.split(",")
     val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
         if (invalid) {
@@ -33,16 +33,15 @@ fun main(args: Array<String>) {
         }
     }
     val algorithms = arrayOf("bench", "raft", "rabia", "paxos", "pineapple", "pineapple-memory")
-
     guard(directory == null, "You must specify a directory with --directory=")
     guard(algorithm == null, "You must specify an algorithm with --algorithm= \nOptions - ${algorithms.joinToString(separator = ", ") { it }}")
     guard(algorithms.find { it.equals(algorithm, ignoreCase = false) } == null, "That is not an accepted algorithm \nOptions - ${algorithms.joinToString(separator = ", ") { it }}")
-    guard(nodes == null, "You must specify an amount of nodes with --nodes=")
-    nodes!!; directory!!
+    guard(ips == null, "You must specify node ips seperated by commas with --ips=")
+    ips!!; directory!!
 
     if (algorithm == "rabia" || algorithm == "paxos") {
         guard(failures == null, "You must specify an amount of failures with --failures=")
-        guard(failures!! > nodes, "Failures must be less than $nodes nodes")
+        guard(failures!! > ips.size, "Failures must be less than ${ips.size} nodes")
     }
 
     val file = File(directory)
@@ -63,20 +62,20 @@ fun main(args: Array<String>) {
             return
         }
 
-        val host = InetAddress.getLocalHost().hostName.split(".")[0]
-        val addresses = (1..nodes).map { "10.10.1.$it" }
-        val ip = addresses[host.substringAfter("-").toInt() - 1]
+        val ip = InetAddress.getLocalHost().hostAddress
+        val host = ips.indexOf(ip)
+        guard(host == -1, "Can't find host address.")
         println("Host: $host")
         println("IP: $ip")
         println("Algorithim: $algorithm")
 
 
-        val setup = if (algorithm == "raft") addresses.joinToString(prefix = "--initial-cluster ", separator = ",") {
-            "node-${addresses.indexOf(it) + 1}=http://$it:12380"
+        val setup = if (algorithm == "raft") ips.joinToString(prefix = "--initial-cluster ", separator = ",") {
+            "node-${ips.indexOf(it) + 1}=http://$it:12380"
         } else ""
 
         ProcessBuilder().apply {
-            environment()["NODES"] = nodes.toString()
+            environment()["NODES"] = ips.joinToString { "," }
             environment()["RS_RABIA"] = (algorithm == "rabia").toString()
             environment()["RS_PAXOS"] = (algorithm == "paxos").toString()
             environment()["PINEAPPLE"] = (algorithm == "pineapple").toString()
