@@ -62,9 +62,10 @@ fun main(args: Array<String>) {
             return
         }
 
-        val ip = InetAddress.getLocalHost().hostAddress
-        val host = ips.indexOf(ip)
-        guard(host == -1, "Can't find host address.")
+        val ip = InetAddress.getLocalHost()
+        println("ip: $ip")
+        val host = ""
+//        guard(host == -1, "Can't find host address.")
         println("Host: $host")
         println("IP: $ip")
         println("Algorithim: $algorithm")
