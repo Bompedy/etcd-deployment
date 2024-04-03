@@ -50,12 +50,12 @@ fun main(args: Array<String>) {
 
     try {
         arrayOf(
-                "git clone https://github.com/Exerosis/Raft.git",
-                "git clone https://github.com/Exerosis/PineappleGo.git",
-                "git clone https://github.com/Exerosis/ETCD.git",
-                "git clone https://github.com/Exerosis/RabiaGo.git",
-                "git clone https://github.com/Bompedy/RS-Paxos.git",
-                "git clone https://github.com/Exerosis/go-ycsb.git"
+            "git clone https://github.com/Exerosis/Raft.git",
+            "git clone https://github.com/Exerosis/PineappleGo.git",
+            "git clone https://github.com/Exerosis/ETCD.git",
+            "git clone https://github.com/Exerosis/RabiaGo.git",
+            "git clone https://github.com/Bompedy/RS-Paxos.git",
+            "git clone https://github.com/Exerosis/go-ycsb.git"
         ).forEach { it.process(file) }
 
         if (algorithm.equals("bench")) {
@@ -65,16 +65,22 @@ fun main(args: Array<String>) {
 
         val interfaces = NetworkInterface.getNetworkInterfaces()
         var ip: String? = null
+        println("\nChecking interfaces: ${ips}")
         while (interfaces.hasMoreElements()) {
             val next = interfaces.nextElement()
+            println("\nInterface: $next")
             val addresses = next.inetAddresses
             while (addresses.hasMoreElements()) {
                 val address = addresses.nextElement()
+                println("Address: $address")
                 if (ips.contains(address.hostAddress)) {
+                    println("Found IP!")
                     ip = address.hostAddress
                 }
             }
         }
+
+        println("Complete!\n")
 
         println("ip: $ip")
         guard(ip == null, "Can't find host!")
@@ -108,8 +114,8 @@ fun main(args: Array<String>) {
                 cd RabiaGo && git pull && cd .. &&
                 cd Raft && git pull && cd .. &&
                 cd RS-Paxos && git pull && cd .. &&
-                cd ETCD && git pull && rm -rf $hostName.etcd && make build &&
-                ./bin/etcd \
+                cd ETCD && git pull && sudo rm -rf $hostName.etcd && make build &&
+                sudo ./bin/etcd \
                 --log-level panic \
                 --name "$hostName" \
                 --initial-cluster-token etcd-cluster-1 \
