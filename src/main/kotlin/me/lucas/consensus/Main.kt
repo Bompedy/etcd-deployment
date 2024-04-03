@@ -24,7 +24,7 @@ fun String.process(directory: File) {
 fun main(args: Array<String>) {
     val directory = args.find { it.startsWith("--directory=") }?.substringAfter("=")
     val algorithm = args.find { it.startsWith("--algorithm=") }?.substringAfter("=")
-    val ips = args.find { it.startsWith("--ips=") }?.substringAfter("=")?.trimIndent()?.split(",")?.map { it.replace("\\s".toRegex(), "") }
+    val ips = args.find { it.startsWith("--ips=") }?.substringAfter("=")?.split(",")?.map { it.replace("\\s".toRegex(), "") }
     println("IPS: $ips")
     val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
