@@ -72,7 +72,7 @@ fun main(args: Array<String>) {
             val addresses = next.inetAddresses
             while (addresses.hasMoreElements()) {
                 val address = addresses.nextElement()
-                println("Address: $address")
+                println("Address: ${address.hostAddress}")
                 if (ips.contains(address.hostAddress)) {
                     println("Found IP!")
                     ip = address.hostAddress
