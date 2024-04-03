@@ -114,8 +114,8 @@ fun main(args: Array<String>) {
                 cd RabiaGo && git pull && cd .. &&
                 cd Raft && git pull && cd .. &&
                 cd RS-Paxos && git pull && cd .. &&
-                cd ETCD && git pull && sudo rm -rf $hostName.etcd && make build &&
-                sudo ./bin/etcd \
+                cd ETCD && git pull && rm -rf $hostName.etcd && make build &&
+                ./bin/etcd \
                 --log-level panic \
                 --name "$hostName" \
                 --initial-cluster-token etcd-cluster-1 \
