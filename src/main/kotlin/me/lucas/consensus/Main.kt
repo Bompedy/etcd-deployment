@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
     val algorithm = args.find { it.startsWith("--algorithm=") }?.substringAfter("=")
     val ips = args.find { it.startsWith("--ips=") }?.substringAfter("=")?.split(",")?.map { it.replace("\\s".toRegex(), "") }
     println("IPS: $ips")
-    val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
+    val parity = args.find { it.startsWith("--parity=") }?.substringAfter("=")?.toInt()
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
         if (invalid) {
             println(message)
@@ -41,8 +41,9 @@ fun main(args: Array<String>) {
     ips!!; directory!!
 
     if (algorithm == "rabia" || algorithm == "paxos") {
-        guard(failures == null, "You must specify an amount of failures with --failures=")
-        guard(failures!! > ips.size, "Failures must be less than ${ips.size} nodes")
+        guard(parity == null, "You must specify an amount of parity with --parity=")
+        guard(parity!! > ips.size, "Parity must be less than ${ips.size} nodes")
+        guard(parity < 0, "Parity must be larger than 0!")
     }
 
     val file = File(directory)
@@ -101,7 +102,7 @@ fun main(args: Array<String>) {
             environment()["RS_PAXOS"] = (algorithm == "paxos").toString()
             environment()["PINEAPPLE"] = (algorithm == "pineapple").toString()
             environment()["PINEAPPLE_MEMORY"] = (algorithm == "pineapple-memory").toString()
-            environment()["FAILURES"] = failures?.toString() ?: "0"
+            environment()["PARITY"] = parity?.toString() ?: "0"
             directory(file)
 
             command(listOf("/bin/bash", "-c", """
