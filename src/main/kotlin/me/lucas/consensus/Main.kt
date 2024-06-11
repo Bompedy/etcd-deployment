@@ -45,8 +45,8 @@ fun main(args: Array<String>) {
         guard(failures == null, "You must specify an amount of failures with --failures=")
         guard(failures!! > ips.size, "Failures must be less than ${ips.size} nodes")
         guard(segments == null, "You must specify an amount of segments with --segments=")
-        guard(segments!! > ips.size, "Segments must be less than ${ips.size} nodes")
-        guard(ips.size < (2 * failures) + segments, "You must have >= nodes to segments and failures!")
+//        guard(segments!! > ips.size, "Segments must be less than ${ips.size} nodes")
+        guard(ips.size < (2 * failures) + segments!!, "You must have >= nodes to segments and failures!")
     }
 
     val file = File(directory)
