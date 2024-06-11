@@ -26,7 +26,8 @@ fun main(args: Array<String>) {
     val algorithm = args.find { it.startsWith("--algorithm=") }?.substringAfter("=")
     val ips = args.find { it.startsWith("--ips=") }?.substringAfter("=")?.split(",")?.map { it.replace("\\s".toRegex(), "") }
     println("IPS: $ips")
-    val parity = args.find { it.startsWith("--parity=") }?.substringAfter("=")?.toInt()
+    val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
+    val segments = args.find { it.startsWith("--segments=") }?.substringAfter("=")?.toInt()
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
         if (invalid) {
             println(message)
@@ -41,9 +42,11 @@ fun main(args: Array<String>) {
     ips!!; directory!!
 
     if (algorithm == "rabia" || algorithm == "paxos") {
-        guard(parity == null, "You must specify an amount of parity with --parity=")
-        guard(parity!! > ips.size, "Parity must be less than ${ips.size} nodes")
-        guard(parity < 0, "Parity must be larger than 0!")
+        guard(failures == null, "You must specify an amount of failures with --failures=")
+        guard(failures!! > ips.size, "Failures must be less than ${ips.size} nodes")
+        guard(segments == null, "You must specify an amount of segments with --segments=")
+        guard(segments!! > ips.size, "Segments must be less than ${ips.size} nodes")
+        guard(ips.size < (2 * failures) + segments, "You must have >= nodes to segments and failures!")
     }
 
     val file = File(directory)
@@ -102,7 +105,8 @@ fun main(args: Array<String>) {
             environment()["RS_PAXOS"] = (algorithm == "paxos").toString()
             environment()["PINEAPPLE"] = (algorithm == "pineapple").toString()
             environment()["PINEAPPLE_MEMORY"] = (algorithm == "pineapple-memory").toString()
-            environment()["PARITY"] = parity?.toString() ?: "0"
+            environment()["FAILURES"] = failures?.toString() ?: "0"
+            environment()["SEGMENTS"] = segments?.toString() ?: "0"
             directory(file)
 
             command(listOf("/bin/bash", "-c", """
