@@ -34,14 +34,14 @@ fun main(args: Array<String>) {
             exitProcess(1)
         }
     }
-    val algorithms = arrayOf("bench", "raft", "rabia", "paxos", "pineapple", "pineapple-memory")
+    val algorithms = arrayOf("bench", "raft", "rabia", "racos", "paxos", "pineapple", "pineapple-memory")
     guard(directory == null, "You must specify a directory with --directory=")
     guard(algorithm == null, "You must specify an algorithm with --algorithm= \nOptions - ${algorithms.joinToString(separator = ", ") { it }}")
     guard(algorithms.find { it.equals(algorithm, ignoreCase = false) } == null, "That is not an accepted algorithm \nOptions - ${algorithms.joinToString(separator = ", ") { it }}")
     guard(ips == null, "You must specify node ips seperated by commas with --ips=")
     ips!!; directory!!
 
-    if (algorithm == "rabia" || algorithm == "paxos") {
+    if (algorithm == "racos" || algorithm == "paxos") {
         guard(failures == null, "You must specify an amount of failures with --failures=")
         guard(failures!! > ips.size, "Failures must be less than ${ips.size} nodes")
         guard(segments == null, "You must specify an amount of segments with --segments=")
@@ -101,7 +101,8 @@ fun main(args: Array<String>) {
 
         ProcessBuilder().apply {
             environment()["NODES"] = ips.joinToString(separator = ",") { it }
-            environment()["RS_RABIA"] = (algorithm == "rabia").toString()
+            environment()["RABIA"] = (algorithm == "rabia").toString()
+            environment()["RACOS"] = (algorithm == "racos").toString()
             environment()["RS_PAXOS"] = (algorithm == "paxos").toString()
             environment()["PINEAPPLE"] = (algorithm == "pineapple").toString()
             environment()["PINEAPPLE_MEMORY"] = (algorithm == "pineapple-memory").toString()
