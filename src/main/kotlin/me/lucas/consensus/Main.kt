@@ -28,6 +28,7 @@ fun main(args: Array<String>) {
     println("IPS: $ips")
     val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
     val segments = args.find { it.startsWith("--segments=") }?.substringAfter("=")?.toInt()
+    val transactionRead = args.find { it.startsWith("--trans_read") }?.substringAfter("=")?.toBoolean()
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
         if (invalid) {
             println(message)
@@ -45,6 +46,7 @@ fun main(args: Array<String>) {
         guard(failures == null, "You must specify an amount of failures with --failures=")
         guard(failures!! > ips.size, "Failures must be less than ${ips.size} nodes")
         guard(segments == null, "You must specify an amount of segments with --segments=")
+        if (algorithm == "racos") guard(transactionRead == null, "Must specify if transaction read is enabled with --trans_read=")
 //        guard(segments!! > ips.size, "Segments must be less than ${ips.size} nodes")
         guard(ips.size < (2 * failures) + segments!!, "You must have >= nodes to segments and failures!")
     }
@@ -107,6 +109,7 @@ fun main(args: Array<String>) {
             environment()["PINEAPPLE"] = (algorithm == "pineapple").toString()
             environment()["PINEAPPLE_MEMORY"] = (algorithm == "pineapple-memory").toString()
             environment()["FAILURES"] = failures?.toString() ?: "0"
+            environment()["TRANSACTION_READ"] = (transactionRead ?: false).toString()
             environment()["SEGMENTS"] = segments?.toString() ?: "0"
             directory(file)
 
