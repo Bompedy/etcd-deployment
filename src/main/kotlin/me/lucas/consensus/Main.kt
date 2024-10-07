@@ -29,7 +29,9 @@ fun main(args: Array<String>) {
     val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
     val segments = args.find { it.startsWith("--segments=") }?.substringAfter("=")?.toInt()
     val transactionRead = args.find { it.startsWith("--trans_read") }?.substringAfter("=")?.toBoolean()
-    val branched = args.find { it.startsWith("--branch") }?.substringAfter("=")
+    val rabiaBranch = args.find { it.startsWith("--rabia-branch") }?.substringAfter("=")
+    val etcdBranch = args.find { it.startsWith("--etcd-branch") }?.substringAfter("=")
+    val paxosBranch = args.find { it.startsWith("--paxos-branch") }?.substringAfter("=")
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
         if (invalid) {
             println(message)
@@ -121,11 +123,11 @@ fun main(args: Array<String>) {
                 git config --global --add safe.directory $directory/PineappleGo &&
                 git config --global --add safe.directory $directory/ETCD &&
                 git config --global --add safe.directory $directory/RS-Paxos &&
-                cd PineappleGo && git fetch --all ${if (branched != null) "&& git checkout $branched" else ""} && git pull && cd .. &&
-                cd RabiaGo && git fetch --all  ${if (branched != null) "&& git checkout $branched" else ""} && git pull && cd .. &&
-                cd Raft && git fetch --all ${if (branched != null) "&& git checkout $branched" else ""} && git pull && cd .. &&
-                cd RS-Paxos && git fetch --all ${if (branched != null) "&& git checkout $branched" else ""} && git pull && cd .. &&
-                cd ETCD && git fetch --all ${if (branched != null) "&& git checkout $branched" else ""} && git pull && rm -rf $hostName.etcd && make build &&
+                cd PineappleGo && git fetch --all && git pull && cd .. &&
+                cd RabiaGo && git fetch --all  ${if (rabiaBranch != null) "&& git checkout $rabiaBranch" else ""} && git pull && cd .. &&
+                cd Raft && git fetch --all && git pull && cd .. &&
+                cd RS-Paxos && git fetch --all ${if (paxosBranch != null) "&& git checkout $paxosBranch" else ""} && git pull && cd .. &&
+                cd ETCD && git fetch --all ${if (etcdBranch != null) "&& git checkout $etcdBranch" else ""} && git pull && rm -rf $hostName.etcd && make build &&
                 ./bin/etcd \
                 --log-level panic \
                 --name "$hostName" \
