@@ -126,11 +126,11 @@ fun main(args: Array<String>) {
                 git config --global --add safe.directory $directory/PineappleGo &&
                 git config --global --add safe.directory $directory/ETCD &&
                 git config --global --add safe.directory $directory/RS-Paxos &&
-                cd PineappleGo && git fetch all && git pull && cd .. &&
-                cd RabiaGo && git fetch all && git pull && cd .. &&
-                cd Raft && git fetch all && git pull && cd .. &&
-                cd RS-Paxos && git fetch all && ${if (devBranch) "git checkout dev" else ""} && git pull && cd .. &&
-                cd ETCD && git fetch all ${if (devBranch) "&& git checkout dev " else ""} && git pull && rm -rf $hostName.etcd && make build &&
+                cd PineappleGo && git fetch --all && git pull && cd .. &&
+                cd RabiaGo && git fetch --all && git pull && cd .. &&
+                cd Raft && git fetch --all && git pull && cd .. &&
+                cd RS-Paxos && git fetch --all && ${if (devBranch) "git checkout dev" else ""} && git pull && cd .. &&
+                cd ETCD && git fetch --all ${if (devBranch) "&& git checkout dev " else ""} && git pull && rm -rf $hostName.etcd && make build &&
                 ./bin/etcd \
                 --log-level panic \
                 --name "$hostName" \
