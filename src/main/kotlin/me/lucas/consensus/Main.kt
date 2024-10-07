@@ -29,6 +29,7 @@ fun main(args: Array<String>) {
     val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
     val segments = args.find { it.startsWith("--segments=") }?.substringAfter("=")?.toInt()
     val transactionRead = args.find { it.startsWith("--trans_read") }?.substringAfter("=")?.toBoolean()
+    val devBranch = args.find { it.startsWith("--dev") } != null
     val guard: (Boolean, String) -> (Unit) = { invalid, message ->
         if (invalid) {
             println(message)
@@ -63,6 +64,12 @@ fun main(args: Array<String>) {
             "git clone https://github.com/Bompedy/RS-Paxos.git",
             "git clone https://github.com/Exerosis/go-ycsb.git"
         ).forEach { it.process(file) }
+
+        if (devBranch) {
+            arrayOf(
+                "cd ETCD",
+                "")
+        }
 
         if (algorithm.equals("bench")) {
             "cd go-ycsb && sudo make".trimIndent().process(file)
@@ -122,8 +129,8 @@ fun main(args: Array<String>) {
                 cd PineappleGo && git pull && cd .. &&
                 cd RabiaGo && git pull && cd .. &&
                 cd Raft && git pull && cd .. &&
-                cd RS-Paxos && git pull && cd .. &&
-                cd ETCD && git pull && rm -rf $hostName.etcd && make build &&
+                cd RS-Paxos && ${if (devBranch) "git checkout dev" else ""} && git pull && cd .. &&
+                cd ETCD ${if (devBranch) "&& git checkout dev " else ""} && git pull && rm -rf $hostName.etcd && make build &&
                 ./bin/etcd \
                 --log-level panic \
                 --name "$hostName" \
