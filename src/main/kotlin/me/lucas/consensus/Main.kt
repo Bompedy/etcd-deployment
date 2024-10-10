@@ -28,6 +28,7 @@ fun main(args: Array<String>) {
     println("IPS: $ips")
     val failures = args.find { it.startsWith("--failures=") }?.substringAfter("=")?.toInt()
     val segments = args.find { it.startsWith("--segments=") }?.substringAfter("=")?.toInt()
+    val paxosFailSlot = args.find { it.startsWith("--paxos-failslot=") }?.substringAfter("=")?.toInt()
     val transactionRead = args.find { it.startsWith("--trans_read") }?.substringAfter("=")?.toBoolean()
     val rabiaBranch = args.find { it.startsWith("--rabia-branch") }?.substringAfter("=")
     val etcdBranch = args.find { it.startsWith("--etcd-branch") }?.substringAfter("=")
@@ -113,6 +114,8 @@ fun main(args: Array<String>) {
             environment()["PINEAPPLE"] = (algorithm == "pineapple").toString()
             environment()["PINEAPPLE_MEMORY"] = (algorithm == "pineapple-memory").toString()
             environment()["FAILURES"] = failures?.toString() ?: "0"
+            environment()["FAILURE_SLOT"] = paxosFailSlot?.toString() ?: "0"
+            environment()["FAILURES_ENABLED"] = if (paxosFailSlot != null) "true" else "false"
             environment()["TRANSACTION_READ"] = (transactionRead ?: false).toString()
             environment()["SEGMENTS"] = segments?.toString() ?: "0"
             directory(file)
