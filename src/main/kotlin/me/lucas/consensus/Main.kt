@@ -132,6 +132,7 @@ fun main(args: Array<String>) {
                 cd RS-Paxos && git fetch --all ${if (paxosBranch != null) "&& git checkout $paxosBranch" else ""} && git pull && cd .. &&
                 cd ETCD && git fetch --all ${if (etcdBranch != null) "&& git checkout $etcdBranch" else ""} && git pull && rm -rf $hostName.etcd && make build &&
                 ./bin/etcd \
+                --enable-pprof \
                 --log-level panic \
                 --name "$hostName" \
                 --initial-cluster-token etcd-cluster-1 \
